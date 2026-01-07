@@ -180,17 +180,16 @@ function showPost(i) {
   }
 }
 
-// Parse Google Drive image URLs - supports multiple formats
+// Parse Google Drive image URLs
 function parseImages(cell) {
   if (!cell || cell === '') {
     return [];
   }
 
-  // Convert to string if not already
   const cellStr = String(cell).trim();
   if (!cellStr) return [];
 
-  // Split by various delimiters
+  // Split by comma, newline, or semicolon for multiple images
   const urls = cellStr.split(/[,\n;]+/);
   const parsedUrls = [];
 
@@ -200,17 +199,15 @@ function parseImages(cell) {
 
     let fileId = null;
     
-    // Try different Google Drive URL patterns
-    
-    // Pattern 1: https://drive.google.com/file/d/FILE_ID/view
-    let match = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    // Pattern 1: https://drive.google.com/open?id=FILE_ID
+    let match = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
     if (match) {
       fileId = match[1];
     }
     
-    // Pattern 2: https://drive.google.com/open?id=FILE_ID
+    // Pattern 2: https://drive.google.com/file/d/FILE_ID/view
     if (!fileId) {
-      match = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+      match = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
       if (match) {
         fileId = match[1];
       }
@@ -224,24 +221,15 @@ function parseImages(cell) {
       }
     }
     
-    // Pattern 4: https://drive.google.com/uc?...id=FILE_ID
-    if (!fileId && url.includes('drive.google.com/uc')) {
-      match = url.match(/id=([a-zA-Z0-9_-]+)/);
-      if (match) {
-        fileId = match[1];
-      }
-    }
-    
-    // Pattern 5: Just the file ID (28-44 characters typically)
-    if (!fileId && /^[a-zA-Z0-9_-]{28,44}$/.test(url)) {
+    // Pattern 4: Just the file ID
+    if (!fileId && /^[a-zA-Z0-9_-]{25,50}$/.test(url)) {
       fileId = url;
     }
 
     if (fileId) {
-      // Convert to direct viewable URL
-      parsedUrls.push('https://drive.google.com/uc?export=view&id=' + fileId);
+      // Convert to thumbnail URL for better loading
+      parsedUrls.push('https://drive.google.com/thumbnail?id=' + fileId + '&sz=w1000');
     } else if (url.startsWith('http')) {
-      // Use as-is if already a complete URL
       parsedUrls.push(url);
     }
   }
