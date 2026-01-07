@@ -5,6 +5,7 @@ const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq
 
 let ALL_POSTS = [];
 let sliderInterval = null;
+let postImageIntervals = {}; // Store intervals for each post's image rotation
 
 // Navigation
 function go(id) {
@@ -60,6 +61,10 @@ function renderPosts() {
   const box = document.getElementById('posts');
   box.innerHTML = '';
 
+  // Clear all existing intervals
+  Object.values(postImageIntervals).forEach(interval => clearInterval(interval));
+  postImageIntervals = {};
+
   if (!ALL_POSTS || ALL_POSTS.length === 0) {
     box.innerHTML = '<div class="no-posts">No activities yet. Check back soon!</div>';
     return;
@@ -77,7 +82,7 @@ function renderPosts() {
     const context = p[3] || 'No description available.';
     const imgs = parseImages(p[4]);
 
-    const preview = context.length > 150 ? context.slice(0, 150) + '...' : context;
+    const preview = context.length > 120 ? context.slice(0, 120) + '...' : context;
 
     const postDiv = document.createElement('div');
     postDiv.className = 'post';
@@ -85,30 +90,31 @@ function renderPosts() {
       openPost(i);
     };
 
-    let html = '<h3>' + escapeHtml(topic) + '</h3>';
-    html += '<small>📅 ' + escapeHtml(date) + '</small>';
-    
-    // Show ALL images in activity list page as preview
+    // Create image container
+    let imageHtml = '<div class="post-image-container">';
     if (imgs.length > 0) {
-      // Create a simple grid for multiple images
-      if (imgs.length === 1) {
-        html += '<img src="' + imgs[0] + '" alt="' + escapeHtml(topic) + '" onerror="this.style.display=\'none\'">';
-      } else {
-        html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 12px;">';
-        for (let j = 0; j < imgs.length && j < 4; j++) {
-          html += '<img src="' + imgs[j] + '" alt="' + escapeHtml(topic) + '" style="width: 100%; height: 150px; object-fit: cover; border-radius: 6px;" onerror="this.style.display=\'none\'">';
-        }
-        if (imgs.length > 4) {
-          html += '<div style="display: flex; align-items: center; justify-content: center; background: #e0e0e0; border-radius: 6px; font-weight: bold; color: #666;">+' + (imgs.length - 4) + ' more</div>';
-        }
-        html += '</div>';
-      }
+      imgs.forEach(function(img, idx) {
+        imageHtml += '<img src="' + img + '" class="' + (idx === 0 ? 'active' : '') + '" alt="' + escapeHtml(topic) + '" onerror="this.style.display=\'none\'">';
+      });
+    } else {
+      imageHtml += '<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999; font-size: 3em;">📷</div>';
     }
-    
-    html += '<div class="preview-text">' + escapeHtml(preview) + '</div>';
+    imageHtml += '</div>';
 
-    postDiv.innerHTML = html;
+    // Create content area
+    let contentHtml = '<div class="post-content-area">';
+    contentHtml += '<h3>' + escapeHtml(topic) + '</h3>';
+    contentHtml += '<small>📅 ' + escapeHtml(date) + '</small>';
+    contentHtml += '<div class="preview-text">' + escapeHtml(preview) + '</div>';
+    contentHtml += '</div>';
+
+    postDiv.innerHTML = imageHtml + contentHtml;
     box.appendChild(postDiv);
+
+    // Start image rotation if multiple images
+    if (imgs.length > 1) {
+      startPostImageRotation(postDiv, imgs.length, i);
+    }
   });
 
   // Check if viewing specific post
@@ -122,8 +128,26 @@ function renderPosts() {
   }
 }
 
+// Auto-rotate images for a post
+function startPostImageRotation(postElement, imageCount, postIndex) {
+  const images = postElement.querySelectorAll('.post-image-container img');
+  let currentIndex = 0;
+
+  const interval = setInterval(function() {
+    images[currentIndex].classList.remove('active');
+    currentIndex = (currentIndex + 1) % imageCount;
+    images[currentIndex].classList.add('active');
+  }, 3000); // Change image every 3 seconds
+
+  postImageIntervals[postIndex] = interval;
+}
+
 // Open post detail
 function openPost(i) {
+  // Clear all image rotation intervals before navigating
+  Object.values(postImageIntervals).forEach(interval => clearInterval(interval));
+  postImageIntervals = {};
+  
   window.location.search = '?post=' + i;
 }
 
@@ -237,7 +261,7 @@ function parseImages(cell) {
   return parsedUrls;
 }
 
-// Image slider
+// Image slider for detail view
 let currentSlide = 0;
 
 function startSlider() {
