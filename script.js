@@ -1,8 +1,7 @@
-// Configuration - UPDATE THIS with your Google Apps Script URL
-const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE?data=true';
-
-// Or use sample data for testing
-const USE_SAMPLE_DATA = true;
+// Configuration
+const SHEET_ID = '1Arwq62vxQSOiRL74752tFAj3g2T0o_X9ixfzQ1ImgVg';
+const SHEET_NAME = 'Form Responses 1'; // Change if your sheet has a different name
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
 let ALL_POSTS = [];
 let sliderInterval = null;
@@ -12,46 +11,30 @@ function go(id) {
   document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
 }
 
-// Load data
+// Load data from Google Sheets
 function loadData() {
-  if (USE_SAMPLE_DATA) {
-    // Sample data for testing
-    ALL_POSTS = [
-      [
-        '2024-01-07 10:30:00',
-        'Chess Tournament 2024',
-        'January 15, 2024',
-        'Join us for our annual chess tournament! Open to all skill levels. Registration starts at 9 AM.',
-        'https://drive.google.com/uc?id=SAMPLE_ID_1'
-      ],
-      [
-        '2024-01-05 14:20:00',
-        'Weekly Chess Practice',
-        'Every Wednesday',
-        'Come practice your chess skills every Wednesday from 4-6 PM in the library. All students welcome!',
-        'https://drive.google.com/uc?id=SAMPLE_ID_2'
-      ]
-    ];
-    renderPosts();
-  } else {
-    // Load from Google Sheets
-    fetch(GOOGLE_SCRIPT_URL)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        return response.json();
-      })
-      .then(data => {
-        ALL_POSTS = data || [];
-        renderPosts();
-      })
-      .catch(error => {
-        document.getElementById('posts').innerHTML =
-          '<div class="no-posts">Error loading activities. Please try again later.</div>';
-        console.error('Error:', error);
-      });
-  }
+  fetch(SHEET_URL)
+    .then(response => response.text())
+    .then(data => {
+      // Remove the wrapper to get JSON
+      const jsonString = data.substring(47).slice(0, -2);
+      const json = JSON.parse(jsonString);
+      
+      // Extract rows
+      const rows = json.table.rows;
+      
+      // Convert to array format (skip header row)
+      ALL_POSTS = rows.slice(1).map(row => {
+        return row.c.map(cell => cell ? cell.v : '');
+      }).reverse(); // Newest first
+      
+      renderPosts();
+    })
+    .catch(error => {
+      document.getElementById('posts').innerHTML =
+        '<div class="no-posts">Error loading activities. Make sure the sheet is public!</div>';
+      console.error('Error:', error);
+    });
 }
 
 // Render posts list
@@ -65,6 +48,12 @@ function renderPosts() {
   }
 
   ALL_POSTS.forEach(function (p, i) {
+    // p[0] = Timestamp (not used)
+    // p[1] = Topic
+    // p[2] = Date
+    // p[3] = Context
+    // p[4] = Picture links
+    
     const topic = p[1] || 'Untitled Activity';
     const date = p[2] || '';
     const context = p[3] || '';
@@ -80,9 +69,12 @@ function renderPosts() {
 
     let html = '<h3>' + escapeHtml(topic) + '</h3>';
     html += '<small>📅 ' + escapeHtml(date) + '</small>';
-    if (imgs[0]) {
+    
+    // Show first image as preview
+    if (imgs.length > 0) {
       html += '<img src="' + imgs[0] + '" alt="' + escapeHtml(topic) + '" onerror="this.style.display=\'none\'">';
     }
+    
     html += '<div class="preview-text">' + escapeHtml(preview) + '</div>';
 
     postDiv.innerHTML = html;
@@ -105,7 +97,7 @@ function openPost(i) {
   window.location.search = '?post=' + i;
 }
 
-// Show post detail
+// Show post detail with ALL images in slider
 function showPost(i) {
   if (sliderInterval) {
     clearInterval(sliderInterval);
@@ -127,15 +119,19 @@ function showPost(i) {
     let slides = '';
     let dots = '';
 
+    // Create slides for ALL images
     for (let idx = 0; idx < imgs.length; idx++) {
       slides += '<img class="slide ' + (idx === 0 ? 'active' : '') + '" src="' + imgs[idx] + '" alt="Image ' + (idx + 1) + '">';
       dots += '<span class="slider-dot ' + (idx === 0 ? 'active' : '') + '" onclick="goToSlide(' + idx + ')"></span>';
     }
 
     sliderHtml = '<div class="slider" id="imageSlider">' + slides;
+    
+    // Show navigation dots if more than 1 image
     if (imgs.length > 1) {
       sliderHtml += '<div class="slider-controls">' + dots + '</div>';
     }
+    
     sliderHtml += '</div>';
   }
 
@@ -148,6 +144,7 @@ function showPost(i) {
     '<div class="post-content">' + escapeHtml(context) + '</div>' +
     '</div>';
 
+  // Start auto-sliding if multiple images
   if (imgs && imgs.length > 1) {
     startSlider();
   }
@@ -159,6 +156,7 @@ function parseImages(cell) {
     return [];
   }
 
+  // Split by comma to get multiple links
   const urls = cell.split(',');
   const parsedUrls = [];
 
@@ -166,11 +164,41 @@ function parseImages(cell) {
     const url = urls[i].trim();
     if (!url) continue;
 
-    // Extract Google Drive ID
-    const idMatch = url.match(/[-\w]{25,}/);
-    if (idMatch) {
-      parsedUrls.push('https://drive.google.com/uc?id=' + idMatch[0]);
+    // Extract Google Drive file ID from various URL formats
+    let fileId = null;
+    
+    // Format 1: https://drive.google.com/file/d/FILE_ID/view
+    let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (match) {
+      fileId = match[1];
+    }
+    
+    // Format 2: https://drive.google.com/open?id=FILE_ID
+    if (!fileId) {
+      match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (match) {
+        fileId = match[1];
+      }
+    }
+    
+    // Format 3: Already in uc format or direct link
+    if (!fileId && url.includes('drive.google.com/uc')) {
+      match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (match) {
+        fileId = match[1];
+      }
+    }
+    
+    // Format 4: Just the file ID
+    if (!fileId && url.match(/^[a-zA-Z0-9_-]{25,}$/)) {
+      fileId = url;
+    }
+
+    if (fileId) {
+      // Convert to direct image URL
+      parsedUrls.push('https://drive.google.com/uc?export=view&id=' + fileId);
     } else if (url.startsWith('http')) {
+      // Use as-is if it's already a full URL
       parsedUrls.push(url);
     }
   }
