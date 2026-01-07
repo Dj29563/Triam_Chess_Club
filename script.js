@@ -24,20 +24,27 @@ function loadData() {
       const rows = json.table.rows;
       
       // Convert to array format (skip header row)
-      ALL_POSTS = rows.slice(1).map(row => {
-        // Handle each cell - some might be null
+      ALL_POSTS = [];
+      
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
         const cells = row.c || [];
-        return [
-          cells[0] ? (cells[0].f || cells[0].v || '') : '', // Timestamp (formatted or value)
-          cells[1] ? (cells[1].v || '') : '',               // Topic
-          cells[2] ? (cells[2].f || cells[2].v || '') : '', // Date (formatted or value)
-          cells[3] ? (cells[3].v || '') : '',               // Context
-          cells[4] ? (cells[4].v || '') : ''                // Picture
-        ];
-      }).filter(post => {
-        // Only include posts that have at least a topic or context
-        return post[1] || post[3];
-      }).reverse(); // Newest first
+        
+        // Extract all cell values
+        const timestamp = cells[0] ? (cells[0].f || cells[0].v || '') : '';
+        const topic = cells[1] ? String(cells[1].v || '') : '';
+        const date = cells[2] ? (cells[2].f || cells[2].v || '') : '';
+        const context = cells[3] ? String(cells[3].v || '') : '';
+        const picture = cells[4] ? String(cells[4].v || '') : '';
+        
+        // Add row if it has at least topic
+        if (topic.trim()) {
+          ALL_POSTS.push([timestamp, topic, date, context, picture]);
+        }
+      }
+      
+      // Reverse to show newest first
+      ALL_POSTS.reverse();
       
       renderPosts();
     })
@@ -81,9 +88,21 @@ function renderPosts() {
     let html = '<h3>' + escapeHtml(topic) + '</h3>';
     html += '<small>📅 ' + escapeHtml(date) + '</small>';
     
-    // Show first image as preview
+    // Show ALL images in activity list page as preview
     if (imgs.length > 0) {
-      html += '<img src="' + imgs[0] + '" alt="' + escapeHtml(topic) + '" onerror="this.style.display=\'none\'">';
+      // Create a simple grid for multiple images
+      if (imgs.length === 1) {
+        html += '<img src="' + imgs[0] + '" alt="' + escapeHtml(topic) + '" onerror="this.style.display=\'none\'">';
+      } else {
+        html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 12px;">';
+        for (let j = 0; j < imgs.length && j < 4; j++) {
+          html += '<img src="' + imgs[j] + '" alt="' + escapeHtml(topic) + '" style="width: 100%; height: 150px; object-fit: cover; border-radius: 6px;" onerror="this.style.display=\'none\'">';
+        }
+        if (imgs.length > 4) {
+          html += '<div style="display: flex; align-items: center; justify-content: center; background: #e0e0e0; border-radius: 6px; font-weight: bold; color: #666;">+' + (imgs.length - 4) + ' more</div>';
+        }
+        html += '</div>';
+      }
     }
     
     html += '<div class="preview-text">' + escapeHtml(preview) + '</div>';
@@ -167,24 +186,37 @@ function parseImages(cell) {
     return [];
   }
 
-  // Split by comma, newline, or semicolon to get multiple links
-  const urls = cell.split(/[,\n;]+/);
+  // Convert to string if not already
+  const cellStr = String(cell).trim();
+  if (!cellStr) return [];
+
+  // Split by various delimiters
+  const urls = cellStr.split(/[,\n;]+/);
   const parsedUrls = [];
 
   for (let i = 0; i < urls.length; i++) {
     const url = urls[i].trim();
     if (!url) continue;
 
-    // Extract Google Drive file ID from various URL formats
     let fileId = null;
     
-    // Format 1: https://drive.google.com/file/d/FILE_ID/view
-    let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    // Try different Google Drive URL patterns
+    
+    // Pattern 1: https://drive.google.com/file/d/FILE_ID/view
+    let match = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
     if (match) {
       fileId = match[1];
     }
     
-    // Format 2: https://drive.google.com/open?id=FILE_ID
+    // Pattern 2: https://drive.google.com/open?id=FILE_ID
+    if (!fileId) {
+      match = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+      if (match) {
+        fileId = match[1];
+      }
+    }
+    
+    // Pattern 3: Any URL with id= parameter
     if (!fileId) {
       match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
       if (match) {
@@ -192,24 +224,24 @@ function parseImages(cell) {
       }
     }
     
-    // Format 3: Already in uc format
+    // Pattern 4: https://drive.google.com/uc?...id=FILE_ID
     if (!fileId && url.includes('drive.google.com/uc')) {
-      match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      match = url.match(/id=([a-zA-Z0-9_-]+)/);
       if (match) {
         fileId = match[1];
       }
     }
     
-    // Format 4: Just the file ID (25-50 characters)
-    if (!fileId && url.match(/^[a-zA-Z0-9_-]{25,50}$/)) {
+    // Pattern 5: Just the file ID (28-44 characters typically)
+    if (!fileId && /^[a-zA-Z0-9_-]{28,44}$/.test(url)) {
       fileId = url;
     }
 
     if (fileId) {
-      // Convert to direct image URL
+      // Convert to direct viewable URL
       parsedUrls.push('https://drive.google.com/uc?export=view&id=' + fileId);
     } else if (url.startsWith('http')) {
-      // Use as-is if it's already a full URL
+      // Use as-is if already a complete URL
       parsedUrls.push(url);
     }
   }
