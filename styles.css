@@ -107,7 +107,7 @@ section {
   background: #fff;
   border-radius: 12px;
   padding: 25px;
-  height: 65vh; /* fixed height for activity section */
+  height: 65vh;
   overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
@@ -130,13 +130,11 @@ section {
   background: #555;
 }
 
-/* Post cards with floating image */
 .post {
-  position: relative;
   background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
   color: #111;
-  padding: 60px 20px 20px 20px; /* top padding for floating image */
-  margin-bottom: 40px; /* extra space for image overlap */
+  padding: 20px;
+  margin-bottom: 20px;
   border-radius: 10px;
   cursor: pointer;
   text-align: left;
@@ -169,59 +167,15 @@ section {
   margin: 12px 0;
 }
 
-/* Floating images in front of post */
-.activity-box .post img {
-  position: absolute;
-  top: -40px; /* float above box */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%; /* width relative to box */
-  height: 120px; /* fixed height */
-  object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-  z-index: 10;
-}
-
-/* Optional: multiple image preview grid (if needed) */
-.activity-box .post .image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 8px;
-}
-
-.activity-box .post .image-grid img {
+.post img {
   width: 100%;
-  height: 100px;
+  max-height: 300px;
   object-fit: cover;
-  border-radius: 6px;
+  margin-top: 12px;
+  border-radius: 8px;
+  display: block;
 }
 
-/* Mini slider for multiple images in activity list */
-.post-slider-preview {
-  position: absolute;
-  top: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  height: 120px;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-  z-index: 10;
-}
-
-.post-slider-preview img.slide {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 0.5s ease-in-out;
-}
-
-/* Post detail styling */
 .post-detail {
   background: white;
   padding: 0;
