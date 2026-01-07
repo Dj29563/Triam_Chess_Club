@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chess Club</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<nav>
+  <button onclick="go('about')">About</button>
+  <button onclick="go('activities')">Activities</button>
+  <button onclick="go('members')">Members</button>
+  <button onclick="go('contact')">Contact</button>
+</nav>
+
+<section id="about">
+  <div class="content">
+    <h1>♟️ Chess Club</h1>
+    <p>Strategy • Logic • Competition</p>
+  </div>
+</section>
+
+<section id="activities">
+  <div class="content">
+    <h2>Club Activities</h2>
+    <div class="activity-box" id="posts">
+      <div class="loading">Loading activities...</div>
+    </div>
+  </div>
+</section>
+
+<section id="members">
+  <div class="content">
+    <h2>Members</h2>
+    <p>Open to all skill levels</p>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="content">
+    <h2>Contact</h2>
+    <p>Email: chessclub@example.com</p>
+  </div>
+</section>
+
+<script src="script.js"></script>
+
+</body>
+</html>
