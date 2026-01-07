@@ -1,6 +1,6 @@
 // Configuration
 const SHEET_ID = '1Arwq62vxQSOiRL74752tFAj3g2T0o_X9ixfzQ1ImgVg';
-const SHEET_NAME = 'Form Responses 1'; // Change if your sheet has a different name
+const SHEET_NAME = 'Form Responses 1';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
 let ALL_POSTS = [];
@@ -25,14 +25,25 @@ function loadData() {
       
       // Convert to array format (skip header row)
       ALL_POSTS = rows.slice(1).map(row => {
-        return row.c.map(cell => cell ? cell.v : '');
+        // Handle each cell - some might be null
+        const cells = row.c || [];
+        return [
+          cells[0] ? (cells[0].f || cells[0].v || '') : '', // Timestamp (formatted or value)
+          cells[1] ? (cells[1].v || '') : '',               // Topic
+          cells[2] ? (cells[2].f || cells[2].v || '') : '', // Date (formatted or value)
+          cells[3] ? (cells[3].v || '') : '',               // Context
+          cells[4] ? (cells[4].v || '') : ''                // Picture
+        ];
+      }).filter(post => {
+        // Only include posts that have at least a topic or context
+        return post[1] || post[3];
       }).reverse(); // Newest first
       
       renderPosts();
     })
     .catch(error => {
       document.getElementById('posts').innerHTML =
-        '<div class="no-posts">Error loading activities. Make sure the sheet is public!</div>';
+        '<div class="no-posts">Error loading activities. Make sure the sheet is public!<br>Error: ' + error.message + '</div>';
       console.error('Error:', error);
     });
 }
@@ -55,8 +66,8 @@ function renderPosts() {
     // p[4] = Picture links
     
     const topic = p[1] || 'Untitled Activity';
-    const date = p[2] || '';
-    const context = p[3] || '';
+    const date = p[2] || 'No date';
+    const context = p[3] || 'No description available.';
     const imgs = parseImages(p[4]);
 
     const preview = context.length > 150 ? context.slice(0, 150) + '...' : context;
@@ -110,8 +121,8 @@ function showPost(i) {
   if (!p) return;
 
   const topic = p[1] || 'Untitled Activity';
-  const date = p[2] || '';
-  const context = p[3] || '';
+  const date = p[2] || 'No date';
+  const context = p[3] || 'No description available.';
   const imgs = parseImages(p[4]);
 
   let sliderHtml = '';
@@ -121,7 +132,7 @@ function showPost(i) {
 
     // Create slides for ALL images
     for (let idx = 0; idx < imgs.length; idx++) {
-      slides += '<img class="slide ' + (idx === 0 ? 'active' : '') + '" src="' + imgs[idx] + '" alt="Image ' + (idx + 1) + '">';
+      slides += '<img class="slide ' + (idx === 0 ? 'active' : '') + '" src="' + imgs[idx] + '" alt="Image ' + (idx + 1) + '" onerror="this.style.display=\'none\'">';
       dots += '<span class="slider-dot ' + (idx === 0 ? 'active' : '') + '" onclick="goToSlide(' + idx + ')"></span>';
     }
 
@@ -150,14 +161,14 @@ function showPost(i) {
   }
 }
 
-// Parse Google Drive image URLs
+// Parse Google Drive image URLs - supports multiple formats
 function parseImages(cell) {
   if (!cell || cell === '') {
     return [];
   }
 
-  // Split by comma to get multiple links
-  const urls = cell.split(',');
+  // Split by comma, newline, or semicolon to get multiple links
+  const urls = cell.split(/[,\n;]+/);
   const parsedUrls = [];
 
   for (let i = 0; i < urls.length; i++) {
@@ -181,7 +192,7 @@ function parseImages(cell) {
       }
     }
     
-    // Format 3: Already in uc format or direct link
+    // Format 3: Already in uc format
     if (!fileId && url.includes('drive.google.com/uc')) {
       match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
       if (match) {
@@ -189,8 +200,8 @@ function parseImages(cell) {
       }
     }
     
-    // Format 4: Just the file ID
-    if (!fileId && url.match(/^[a-zA-Z0-9_-]{25,}$/)) {
+    // Format 4: Just the file ID (25-50 characters)
+    if (!fileId && url.match(/^[a-zA-Z0-9_-]{25,50}$/)) {
       fileId = url;
     }
 
