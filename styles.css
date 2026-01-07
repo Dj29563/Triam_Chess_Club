@@ -107,7 +107,7 @@ section {
   background: #fff;
   border-radius: 12px;
   padding: 25px;
-  height: 65vh;
+  height: 65vh; /* fixed height for activity section */
   overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
@@ -167,15 +167,50 @@ section {
   margin: 12px 0;
 }
 
-.post img {
+/* Fixed-height images for activity list */
+.activity-box .post img {
   width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  margin-top: 12px;
+  height: 150px; /* fixed height for preview */
+  object-fit: cover; /* scale & crop */
   border-radius: 8px;
+  margin-top: 12px;
   display: block;
 }
 
+/* Optional: multiple image preview grid (if needed) */
+.activity-box .post .image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.activity-box .post .image-grid img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/* Mini slider for multiple images in activity list */
+.post-slider-preview {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.post-slider-preview img.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Post detail styling */
 .post-detail {
   background: white;
   padding: 0;
