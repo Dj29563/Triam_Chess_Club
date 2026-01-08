@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Chess Club</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<nav>
+<nav id="mainNav">
   <button onclick="go('about')">About</button>
   <button onclick="go('activities')">Activities</button>
   <button onclick="go('members')">Members</button>
@@ -44,6 +44,31 @@
     <p>Email: chessclub@example.com</p>
   </div>
 </section>
+
+<!-- Full-screen overlay for viewing all activities -->
+<div id="allActivitiesOverlay" class="overlay">
+  <div class="overlay-content">
+    <div class="overlay-header">
+      <h2>All Activities</h2>
+      <button class="close-button" onclick="closeAllActivities()">✕</button>
+    </div>
+    <div class="overlay-body" id="allActivitiesList">
+      <!-- All activities will be loaded here -->
+    </div>
+  </div>
+</div>
+
+<!-- Full-screen overlay for viewing single activity -->
+<div id="activityDetailOverlay" class="overlay">
+  <div class="overlay-content">
+    <div class="overlay-header">
+      <button class="back-button" onclick="closeActivityDetail()">← Back</button>
+    </div>
+    <div class="overlay-body" id="activityDetail">
+      <!-- Activity detail will be loaded here -->
+    </div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 
