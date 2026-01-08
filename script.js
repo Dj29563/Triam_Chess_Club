@@ -56,7 +56,7 @@ function loadData() {
     });
 }
 
-// Render posts list
+// Render posts list (only first 3)
 function renderPosts() {
   const box = document.getElementById('posts');
   box.innerHTML = '';
@@ -70,62 +70,66 @@ function renderPosts() {
     return;
   }
 
-  ALL_POSTS.forEach(function (p, i) {
-    // p[0] = Timestamp (not used)
-    // p[1] = Topic
-    // p[2] = Date
-    // p[3] = Context
-    // p[4] = Picture links
-    
-    const topic = p[1] || 'Untitled Activity';
-    const date = p[2] || 'No date';
-    const context = p[3] || 'No description available.';
-    const imgs = parseImages(p[4]);
+  // Show only first 3 posts
+  const postsToShow = ALL_POSTS.slice(0, 3);
 
-    const preview = context.length > 120 ? context.slice(0, 120) + '...' : context;
-
-    const postDiv = document.createElement('div');
-    postDiv.className = 'post';
-    postDiv.onclick = function () {
-      openPost(i);
-    };
-
-    // Create image container
-    let imageHtml = '<div class="post-image-container">';
-    if (imgs.length > 0) {
-      imgs.forEach(function(img, idx) {
-        imageHtml += '<img src="' + img + '" class="' + (idx === 0 ? 'active' : '') + '" alt="' + escapeHtml(topic) + '" onerror="this.style.display=\'none\'">';
-      });
-    } else {
-      imageHtml += '<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999; font-size: 3em;">📷</div>';
-    }
-    imageHtml += '</div>';
-
-    // Create content area
-    let contentHtml = '<div class="post-content-area">';
-    contentHtml += '<h3>' + escapeHtml(topic) + '</h3>';
-    contentHtml += '<small>📅 ' + escapeHtml(date) + '</small>';
-    contentHtml += '<div class="preview-text">' + escapeHtml(preview) + '</div>';
-    contentHtml += '</div>';
-
-    postDiv.innerHTML = imageHtml + contentHtml;
+  postsToShow.forEach(function (p, i) {
+    const postDiv = createPostElement(p, i);
     box.appendChild(postDiv);
 
     // Start image rotation if multiple images
+    const imgs = parseImages(p[4]);
     if (imgs.length > 1) {
       startPostImageRotation(postDiv, imgs.length, i);
     }
   });
 
-  // Check if viewing specific post
-  const params = new URLSearchParams(window.location.search);
-  const postId = params.get('post');
-  if (postId !== null) {
-    const index = parseInt(postId);
-    if (!isNaN(index) && index >= 0 && index < ALL_POSTS.length) {
-      showPost(index);
-    }
+  // Add "View All Activities" button if there are more than 3 posts
+  if (ALL_POSTS.length > 3) {
+    const viewAllButton = document.createElement('button');
+    viewAllButton.className = 'view-all-button';
+    viewAllButton.textContent = 'View All Activities (' + ALL_POSTS.length + ')';
+    viewAllButton.onclick = showAllActivities;
+    box.appendChild(viewAllButton);
   }
+}
+
+// Create a post element
+function createPostElement(p, i) {
+  const topic = p[1] || 'Untitled Activity';
+  const date = p[2] || 'No date';
+  const context = p[3] || 'No description available.';
+  const imgs = parseImages(p[4]);
+
+  const preview = context.length > 120 ? context.slice(0, 120) + '...' : context;
+
+  const postDiv = document.createElement('div');
+  postDiv.className = 'post';
+  postDiv.onclick = function () {
+    openActivityDetail(i);
+  };
+
+  // Create image container
+  let imageHtml = '<div class="post-image-container">';
+  if (imgs.length > 0) {
+    imgs.forEach(function(img, idx) {
+      imageHtml += '<img src="' + img + '" class="' + (idx === 0 ? 'active' : '') + '" alt="' + escapeHtml(topic) + '" onerror="this.style.display=\'none\'">';
+    });
+  } else {
+    imageHtml += '<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999; font-size: 3em;">📷</div>';
+  }
+  imageHtml += '</div>';
+
+  // Create content area
+  let contentHtml = '<div class="post-content-area">';
+  contentHtml += '<h3>' + escapeHtml(topic) + '</h3>';
+  contentHtml += '<small>📅 ' + escapeHtml(date) + '</small>';
+  contentHtml += '<div class="preview-text">' + escapeHtml(preview) + '</div>';
+  contentHtml += '</div>';
+
+  postDiv.innerHTML = imageHtml + contentHtml;
+
+  return postDiv;
 }
 
 // Auto-rotate images for a post
@@ -142,23 +146,60 @@ function startPostImageRotation(postElement, imageCount, postIndex) {
   postImageIntervals[postIndex] = interval;
 }
 
-// Open post detail
-function openPost(i) {
-  // Clear all image rotation intervals before navigating
+// Show all activities in overlay
+function showAllActivities() {
+  const overlay = document.getElementById('allActivitiesOverlay');
+  const listContainer = document.getElementById('allActivitiesList');
+  
+  listContainer.innerHTML = '';
+
+  // Clear existing intervals
   Object.values(postImageIntervals).forEach(interval => clearInterval(interval));
   postImageIntervals = {};
-  
-  window.location.search = '?post=' + i;
+
+  ALL_POSTS.forEach(function(p, i) {
+    const postDiv = createPostElement(p, i);
+    listContainer.appendChild(postDiv);
+
+    // Start image rotation if multiple images
+    const imgs = parseImages(p[4]);
+    if (imgs.length > 1) {
+      startPostImageRotation(postDiv, imgs.length, i);
+    }
+  });
+
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
 }
 
-// Show post detail with ALL images in slider
-function showPost(i) {
+// Close all activities overlay
+function closeAllActivities() {
+  const overlay = document.getElementById('allActivitiesOverlay');
+  overlay.classList.remove('active');
+  document.body.style.overflow = ''; // Restore scrolling
+
+  // Clear all intervals
+  Object.values(postImageIntervals).forEach(interval => clearInterval(interval));
+  postImageIntervals = {};
+
+  // Re-render main page posts
+  renderPosts();
+}
+
+// Open activity detail in overlay
+function openActivityDetail(i) {
   if (sliderInterval) {
     clearInterval(sliderInterval);
     sliderInterval = null;
   }
 
-  const box = document.getElementById('posts');
+  // Clear post image intervals
+  Object.values(postImageIntervals).forEach(interval => clearInterval(interval));
+  postImageIntervals = {};
+
+  const overlay = document.getElementById('activityDetailOverlay');
+  const detailContainer = document.getElementById('activityDetail');
+  
   const p = ALL_POSTS[i];
 
   if (!p) return;
@@ -189,18 +230,48 @@ function showPost(i) {
     sliderHtml += '</div>';
   }
 
-  box.innerHTML =
-    '<div class="post post-detail">' +
-    '<button class="back-button" onclick="window.location.search=\'\'">← Back to Activities</button>' +
+  detailContainer.innerHTML =
+    '<div class="activity-detail-content">' +
     '<h2>' + escapeHtml(topic) + '</h2>' +
     '<small>📅 ' + escapeHtml(date) + '</small>' +
     sliderHtml +
     '<div class="post-content">' + escapeHtml(context) + '</div>' +
     '</div>';
 
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+
   // Start auto-sliding if multiple images
   if (imgs && imgs.length > 1) {
     startSlider();
+  }
+}
+
+// Close activity detail overlay
+function closeActivityDetail() {
+  const overlay = document.getElementById('activityDetailOverlay');
+  overlay.classList.remove('active');
+  document.body.style.overflow = ''; // Restore scrolling
+
+  if (sliderInterval) {
+    clearInterval(sliderInterval);
+    sliderInterval = null;
+  }
+
+  // Check if we're in "all activities" view
+  const allActivitiesOverlay = document.getElementById('allActivitiesOverlay');
+  if (allActivitiesOverlay.classList.contains('active')) {
+    // Restart image rotations for all activities view
+    const posts = document.querySelectorAll('#allActivitiesList .post');
+    posts.forEach(function(postDiv, i) {
+      const imgs = parseImages(ALL_POSTS[i][4]);
+      if (imgs.length > 1) {
+        startPostImageRotation(postDiv, imgs.length, i);
+      }
+    });
+  } else {
+    // Re-render main page posts
+    renderPosts();
   }
 }
 
