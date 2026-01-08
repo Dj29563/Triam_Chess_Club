@@ -6,6 +6,8 @@ const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq
 let ALL_POSTS = [];
 let sliderInterval = null;
 let postImageIntervals = {}; // Store intervals for each post's image rotation
+let currentPage = 1;
+const POSTS_PER_PAGE = 10;
 
 // Navigation
 function go(id) {
@@ -56,7 +58,12 @@ function loadData() {
     });
 }
 
-// Render posts list (only first 3)
+// Detect if mobile
+function isMobile() {
+  return window.innerWidth <= 768;
+}
+
+// Render posts list (2 on mobile, 3 on desktop)
 function renderPosts() {
   const box = document.getElementById('posts');
   box.innerHTML = '';
@@ -70,10 +77,11 @@ function renderPosts() {
     return;
   }
 
-  // Show only first 3 posts
-  const postsToShow = ALL_POSTS.slice(0, 3);
+  // Show 2 posts on mobile, 3 on desktop
+  const postsToShow = isMobile() ? 2 : 3;
+  const postsSlice = ALL_POSTS.slice(0, postsToShow);
 
-  postsToShow.forEach(function (p, i) {
+  postsSlice.forEach(function (p, i) {
     const postDiv = createPostElement(p, i);
     box.appendChild(postDiv);
 
@@ -84,14 +92,12 @@ function renderPosts() {
     }
   });
 
-  // Add "View All Activities" button if there are more than 3 posts
-  if (ALL_POSTS.length > 3) {
-    const viewAllButton = document.createElement('button');
-    viewAllButton.className = 'view-all-button';
-    viewAllButton.textContent = 'View All Activities (' + ALL_POSTS.length + ')';
-    viewAllButton.onclick = showAllActivities;
-    box.appendChild(viewAllButton);
-  }
+  // Always add "View All Activities" button
+  const viewAllButton = document.createElement('button');
+  viewAllButton.className = 'view-all-button';
+  viewAllButton.textContent = 'View All Activities (' + ALL_POSTS.length + ')';
+  viewAllButton.onclick = showAllActivities;
+  box.appendChild(viewAllButton);
 }
 
 // Create a post element
@@ -146,30 +152,85 @@ function startPostImageRotation(postElement, imageCount, postIndex) {
   postImageIntervals[postIndex] = interval;
 }
 
-// Show all activities in overlay
+// Show all activities in overlay with pagination
 function showAllActivities() {
-  const overlay = document.getElementById('allActivitiesOverlay');
-  const listContainer = document.getElementById('allActivitiesList');
+  currentPage = 1;
+  renderAllActivitiesPage();
   
+  const overlay = document.getElementById('allActivitiesOverlay');
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+// Render all activities page
+function renderAllActivitiesPage() {
+  const listContainer = document.getElementById('allActivitiesList');
   listContainer.innerHTML = '';
 
   // Clear existing intervals
   Object.values(postImageIntervals).forEach(interval => clearInterval(interval));
   postImageIntervals = {};
 
-  ALL_POSTS.forEach(function(p, i) {
-    const postDiv = createPostElement(p, i);
+  // Calculate pagination
+  const totalPages = Math.ceil(ALL_POSTS.length / POSTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const endIndex = Math.min(startIndex + POSTS_PER_PAGE, ALL_POSTS.length);
+  const postsToShow = ALL_POSTS.slice(startIndex, endIndex);
+
+  // Render posts
+  postsToShow.forEach(function(p, i) {
+    const actualIndex = startIndex + i;
+    const postDiv = createPostElement(p, actualIndex);
     listContainer.appendChild(postDiv);
 
     // Start image rotation if multiple images
-    const imgs = parseImages(p[4]);
+    const imgs = parseImages(p[actualIndex][4]);
     if (imgs.length > 1) {
-      startPostImageRotation(postDiv, imgs.length, i);
+      startPostImageRotation(postDiv, imgs.length, actualIndex);
     }
   });
 
-  overlay.classList.add('active');
-  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  // Add pagination controls
+  if (totalPages > 1) {
+    const paginationDiv = document.createElement('div');
+    paginationDiv.className = 'pagination-controls';
+    
+    // Previous button
+    const prevButton = document.createElement('button');
+    prevButton.className = 'pagination-button';
+    prevButton.innerHTML = '← Previous';
+    prevButton.disabled = currentPage === 1;
+    prevButton.onclick = function() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderAllActivitiesPage();
+        document.getElementById('allActivitiesList').scrollTop = 0;
+      }
+    };
+    paginationDiv.appendChild(prevButton);
+
+    // Page info
+    const pageInfo = document.createElement('span');
+    pageInfo.className = 'page-info';
+    pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages;
+    paginationDiv.appendChild(pageInfo);
+
+    // Next button
+    const nextButton = document.createElement('button');
+    nextButton.className = 'pagination-button';
+    nextButton.innerHTML = 'Next →';
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.onclick = function() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderAllActivitiesPage();
+        document.getElementById('allActivitiesList').scrollTop = 0;
+      }
+    };
+    paginationDiv.appendChild(nextButton);
+
+    listContainer.appendChild(paginationDiv);
+  }
 }
 
 // Close all activities overlay
@@ -262,13 +323,7 @@ function closeActivityDetail() {
   const allActivitiesOverlay = document.getElementById('allActivitiesOverlay');
   if (allActivitiesOverlay.classList.contains('active')) {
     // Restart image rotations for all activities view
-    const posts = document.querySelectorAll('#allActivitiesList .post');
-    posts.forEach(function(postDiv, i) {
-      const imgs = parseImages(ALL_POSTS[i][4]);
-      if (imgs.length > 1) {
-        startPostImageRotation(postDiv, imgs.length, i);
-      }
-    });
+    renderAllActivitiesPage();
   } else {
     // Re-render main page posts
     renderPosts();
@@ -389,6 +444,18 @@ function escapeHtml(text) {
   div.textContent = text;
   return div.innerHTML;
 }
+
+// Re-render on window resize
+window.addEventListener('resize', function() {
+  // Only re-render if not in overlay
+  const allActivitiesOverlay = document.getElementById('allActivitiesOverlay');
+  const activityDetailOverlay = document.getElementById('activityDetailOverlay');
+  
+  if (!allActivitiesOverlay.classList.contains('active') && 
+      !activityDetailOverlay.classList.contains('active')) {
+    renderPosts();
+  }
+});
 
 // Initialize
 loadData();
