@@ -9,7 +9,6 @@
 <body>
 
 <nav id="mainNav">
-  <div class="nav-logo">♟️</div>
   <button onclick="go('about')">About</button>
   <button onclick="go('activities')">Activities</button>
   <button onclick="go('members')">Members</button>
@@ -46,6 +45,7 @@
   </div>
 </section>
 
+<!-- Full-screen overlay for viewing all activities -->
 <div id="allActivitiesOverlay" class="overlay">
   <div class="overlay-content">
     <div class="overlay-header">
@@ -53,17 +53,19 @@
       <button class="close-button" onclick="closeAllActivities()">✕</button>
     </div>
     <div class="overlay-body" id="allActivitiesList">
+      <!-- All activities will be loaded here -->
     </div>
   </div>
 </div>
 
+<!-- Full-screen overlay for viewing single activity -->
 <div id="activityDetailOverlay" class="overlay">
   <div class="overlay-content">
     <div class="overlay-header">
       <button class="back-button" onclick="closeActivityDetail()">← Back</button>
-      <div></div>
     </div>
     <div class="overlay-body" id="activityDetail">
+      <!-- Activity detail will be loaded here -->
     </div>
   </div>
 </div>
