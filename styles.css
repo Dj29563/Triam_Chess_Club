@@ -7,7 +7,6 @@ html, body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
   overflow-y: scroll;
   background: #111;
   color: white;
@@ -55,19 +54,18 @@ nav button:hover {
 }
 
 section {
-  height: 100vh;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  min-height: 100vh;
   padding: 70px 20px 40px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  overflow: hidden;
+  overflow: visible;
 }
 
 #about {
   background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
   align-items: center;
+  height: 100vh;
 }
 
 #about h1 {
@@ -83,17 +81,19 @@ section {
 #activities {
   background: #f4f4f4;
   color: #111;
-  padding-top: 100px;
+  padding-top: 80px;
+  height: 100vh;
+  overflow: hidden;
 }
 
 #activities h2 {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   font-size: 2em;
 }
 
 #activities .content {
   max-width: 1000px;
-  height: calc(100vh - 140px);
+  height: calc(100vh - 100px);
   display: flex;
   flex-direction: column;
 }
@@ -101,6 +101,7 @@ section {
 #members {
   background: #263238;
   align-items: center;
+  height: 100vh;
 }
 
 #members h2 {
@@ -114,6 +115,7 @@ section {
 #contact {
   background: #000;
   align-items: center;
+  height: 100vh;
 }
 
 #contact h2 {
@@ -145,6 +147,7 @@ section {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  margin-bottom: 15px;
 }
 
 .activity-box::-webkit-scrollbar {
@@ -162,31 +165,6 @@ section {
 }
 
 .activity-box::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-.activity-posts-container {
-  flex: 0 1 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.activity-posts-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.activity-posts-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.activity-posts-container::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
-
-.activity-posts-container::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
@@ -277,9 +255,9 @@ section {
   cursor: pointer;
   font-size: 15px;
   font-weight: bold;
-  margin-top: 15px;
   transition: background 0.3s, transform 0.2s;
   width: 100%;
+  max-width: 900px;
   flex-shrink: 0;
 }
 
@@ -506,71 +484,4 @@ section {
   color: #333;
   min-width: 120px;
   text-align: center;
-}
-
-@media (max-width: 768px) {
-  section {
-    padding: 70px 15px 30px;
-  }
-
-  #activities {
-    padding-top: 75px;
-  }
-
-  .activity-box {
-    padding: 15px;
-  }
-  
-  .post {
-    flex-direction: column;
-    height: auto;
-    min-height: 220px;
-  }
-
-  .post-image-container {
-    width: 100%;
-    height: 150px;
-  }
-
-  .post-content-area {
-    padding: 12px;
-  }
-
-  .post-content-area h3 {
-    font-size: 1.1em;
-    white-space: normal;
-  }
-
-  .slider {
-    height: 300px;
-  }
-
-  nav button {
-    margin: 0 8px;
-    font-size: 14px;
-  }
-
-  #about h1 {
-    font-size: 2em;
-  }
-
-  #about p {
-    font-size: 1.1em;
-  }
-
-  .overlay-header {
-    padding: 15px 20px;
-  }
-
-  .overlay-header h2 {
-    font-size: 1.5em;
-  }
-
-  .overlay-body {
-    padding: 20px;
-  }
-
-  .activity-detail-content h2 {
-    font-size: 1.8em;
-  }
 }
