@@ -43,16 +43,15 @@ section {
   height: 100vh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  padding: 70px 20px 40px;
+  padding: 90px 20px 40px;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   overflow: hidden;
 }
 
 #about {
   background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
-  align-items: center;
 }
 
 #about h1 {
@@ -68,7 +67,6 @@ section {
 #activities {
   background: #f4f4f4;
   color: #111;
-  padding-top: 80px;
 }
 
 #activities h2 {
@@ -78,7 +76,6 @@ section {
 
 #members {
   background: #263238;
-  align-items: center;
 }
 
 #members h2 {
@@ -91,7 +88,6 @@ section {
 
 #contact {
   background: #000;
-  align-items: center;
 }
 
 #contact h2 {
@@ -106,8 +102,10 @@ section {
   width: 100%;
   max-width: 1000px;
   text-align: center;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 
@@ -120,37 +118,17 @@ section {
   flex-direction: column;
   width: 100%;
   max-width: 900px;
-  height: auto;
-  max-height: calc(100vh - 200px);
+  height: calc(100vh - 200px);
+  max-height: 650px;
   overflow: hidden;
 }
 
 .activity-posts-container {
-  flex: 0 1 auto;
-  overflow-y: auto;
-  overflow-x: hidden;
+  flex: 1;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding-right: 5px;
-}
-
-.activity-posts-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.activity-posts-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.activity-posts-container::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
-
-.activity-posts-container::-webkit-scrollbar-thumb:hover {
-  background: #555;
 }
 
 /* Activity post layout with image on left */
@@ -232,7 +210,7 @@ section {
   overflow: hidden;
 }
 
-/* View All Activities Button - Fixed at bottom */
+/* View All Activities Button */
 .view-all-button {
   background: #1e88e5;
   color: white;
@@ -242,11 +220,10 @@ section {
   cursor: pointer;
   font-size: 15px;
   font-weight: bold;
-  margin-top: 15px;
+  margin-top: 12px;
   transition: background 0.3s, transform 0.2s;
   width: 100%;
   flex-shrink: 0;
-  position: relative;
 }
 
 .view-all-button:hover {
@@ -478,17 +455,9 @@ section {
 }
 
 @media (max-width: 768px) {
-  section {
-    padding: 70px 15px 30px;
-  }
-
-  #activities {
-    padding-top: 75px;
-  }
-
   .activity-box {
+    height: calc(100vh - 150px);
     padding: 15px;
-    max-height: calc(100vh - 170px);
   }
 
   .post {
@@ -541,4 +510,45 @@ section {
   }
 
   .activity-detail-content h2 {
-    f
+    font-size: 1.8em;
+  }
+
+  .activity-detail-content small {
+    font-size: 1em;
+  }
+
+  .post-content {
+    font-size: 1em;
+  }
+
+  .pagination-controls {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .pagination-button {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+
+  .page-info {
+    font-size: 14px;
+    width: 100%;
+    order: -1;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-height: 700px) {
+  .activity-box {
+    max-height: 550px;
+  }
+
+  .post {
+    height: 130px;
+  }
+
+  .post-image-container {
+    height: 130px;
+  }
+}
