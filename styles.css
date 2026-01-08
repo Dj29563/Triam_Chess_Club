@@ -43,15 +43,16 @@ section {
   height: 100vh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  padding: 90px 20px 40px;
+  padding: 70px 20px 40px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   overflow: hidden;
 }
 
 #about {
   background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+  align-items: center;
 }
 
 #about h1 {
@@ -67,15 +68,17 @@ section {
 #activities {
   background: #f4f4f4;
   color: #111;
+  padding-top: 80px;
 }
 
 #activities h2 {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   font-size: 2em;
 }
 
 #members {
   background: #263238;
+  align-items: center;
 }
 
 #members h2 {
@@ -88,6 +91,7 @@ section {
 
 #contact {
   background: #000;
+  align-items: center;
 }
 
 #contact h2 {
@@ -102,11 +106,10 @@ section {
   width: 100%;
   max-width: 1000px;
   text-align: center;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .activity-box {
@@ -118,17 +121,28 @@ section {
   flex-direction: column;
   width: 100%;
   max-width: 900px;
-  height: calc(100vh - 200px);
-  max-height: 650px;
-  overflow: hidden;
+  height: auto;
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.activity-posts-container {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+.activity-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.activity-box::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.activity-box::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.activity-box::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 /* Activity post layout with image on left */
@@ -210,8 +224,8 @@ section {
   overflow: hidden;
 }
 
-/* View All Activities Button */
-.view-all-button {
+/* View All Activities Button - Fixed outside box */
+.view-all-button-fixed {
   background: #1e88e5;
   color: white;
   border: none;
@@ -220,15 +234,17 @@ section {
   cursor: pointer;
   font-size: 15px;
   font-weight: bold;
-  margin-top: 12px;
+  margin-top: 15px;
   transition: background 0.3s, transform 0.2s;
   width: 100%;
-  flex-shrink: 0;
+  max-width: 900px;
+  box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
 }
 
-.view-all-button:hover {
+.view-all-button-fixed:hover {
   background: #1565c0;
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(30, 136, 229, 0.4);
 }
 
 /* Overlay styles */
@@ -455,9 +471,17 @@ section {
 }
 
 @media (max-width: 768px) {
+  section {
+    padding: 70px 15px 30px;
+  }
+
+  #activities {
+    padding-top: 75px;
+  }
+
   .activity-box {
-    height: calc(100vh - 150px);
     padding: 15px;
+    max-height: calc(100vh - 250px);
   }
 
   .post {
@@ -541,7 +565,7 @@ section {
 
 @media (max-height: 700px) {
   .activity-box {
-    max-height: 550px;
+    max-height: calc(100vh - 260px);
   }
 
   .post {
