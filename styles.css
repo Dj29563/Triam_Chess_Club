@@ -22,6 +22,21 @@ nav {
   text-align: center;
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  transition: top 0.3s ease;
+}
+
+nav.dropdown {
+  top: 60px;
+}
+
+.nav-logo {
+  font-size: 2em;
+  margin-bottom: 10px;
+  display: none;
+}
+
+nav.dropdown .nav-logo {
+  display: block;
 }
 
 nav button {
@@ -43,15 +58,16 @@ section {
   height: 100vh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  padding: 90px 20px 40px;
+  padding: 70px 20px 40px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   overflow: hidden;
 }
 
 #about {
   background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+  align-items: center;
 }
 
 #about h1 {
@@ -67,6 +83,7 @@ section {
 #activities {
   background: #f4f4f4;
   color: #111;
+  padding-top: 100px;
 }
 
 #activities h2 {
@@ -74,8 +91,16 @@ section {
   font-size: 2em;
 }
 
+#activities .content {
+  max-width: 1000px;
+  height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+}
+
 #members {
   background: #263238;
+  align-items: center;
 }
 
 #members h2 {
@@ -88,6 +113,7 @@ section {
 
 #contact {
   background: #000;
+  align-items: center;
 }
 
 #contact h2 {
@@ -102,10 +128,8 @@ section {
   width: 100%;
   max-width: 1000px;
   text-align: center;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 
@@ -118,20 +142,54 @@ section {
   flex-direction: column;
   width: 100%;
   max-width: 900px;
-  height: calc(100vh - 200px);
-  max-height: 650px;
-  overflow: hidden;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.activity-box::-webkit-scrollbar {
+  width: 10px;
+}
+
+.activity-box::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.activity-box::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.activity-box::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .activity-posts-container {
-  flex: 1;
-  overflow: hidden;
+  flex: 0 1 auto;
   display: flex;
   flex-direction: column;
   min-height: 0;
 }
 
-/* Activity post layout with image on left */
+.activity-posts-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.activity-posts-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.activity-posts-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.activity-posts-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 .post {
   background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
   color: #111;
@@ -210,7 +268,6 @@ section {
   overflow: hidden;
 }
 
-/* View All Activities Button */
 .view-all-button {
   background: #1e88e5;
   color: white;
@@ -220,7 +277,7 @@ section {
   cursor: pointer;
   font-size: 15px;
   font-weight: bold;
-  margin-top: 12px;
+  margin-top: 15px;
   transition: background 0.3s, transform 0.2s;
   width: 100%;
   flex-shrink: 0;
@@ -231,7 +288,6 @@ section {
   transform: translateY(-2px);
 }
 
-/* Overlay styles */
 .overlay {
   display: none;
   position: fixed;
@@ -321,7 +377,6 @@ section {
   overflow-y: auto;
 }
 
-/* Activity detail in overlay */
 .activity-detail-content {
   max-width: 900px;
   margin: 0 auto;
@@ -412,7 +467,6 @@ section {
   color: #666;
 }
 
-/* Pagination controls */
 .pagination-controls {
   display: flex;
   justify-content: center;
@@ -455,11 +509,18 @@ section {
 }
 
 @media (max-width: 768px) {
-  .activity-box {
-    height: calc(100vh - 150px);
-    padding: 15px;
+  section {
+    padding: 70px 15px 30px;
   }
 
+  #activities {
+    padding-top: 75px;
+  }
+
+  .activity-box {
+    padding: 15px;
+  }
+  
   .post {
     flex-direction: column;
     height: auto;
@@ -511,44 +572,5 @@ section {
 
   .activity-detail-content h2 {
     font-size: 1.8em;
-  }
-
-  .activity-detail-content small {
-    font-size: 1em;
-  }
-
-  .post-content {
-    font-size: 1em;
-  }
-
-  .pagination-controls {
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .pagination-button {
-    padding: 10px 18px;
-    font-size: 14px;
-  }
-
-  .page-info {
-    font-size: 14px;
-    width: 100%;
-    order: -1;
-    margin-bottom: 10px;
-  }
-}
-
-@media (max-height: 700px) {
-  .activity-box {
-    max-height: 550px;
-  }
-
-  .post {
-    height: 130px;
-  }
-
-  .post-image-container {
-    height: 130px;
   }
 }
