@@ -14,7 +14,6 @@ function go(id) {
 }
 
 // Handle nav dropdown when in about section
-let lastScrollPosition = 0;
 window.addEventListener('scroll', function() {
   const aboutSection = document.getElementById('about');
   const nav = document.getElementById('mainNav');
@@ -60,12 +59,11 @@ function loadData() {
     });
 }
 
-function isMobile() {
-  return false; // Always show 3 activities on all devices
-}
-
 function renderPosts() {
   const box = document.getElementById('posts');
+  const content = document.querySelector('#activities .content');
+  
+  // Clear box
   box.innerHTML = '';
 
   Object.values(postImageIntervals).forEach(interval => clearInterval(interval));
@@ -76,10 +74,8 @@ function renderPosts() {
     return;
   }
 
-  const postsToShow = 3; // Always show 3 activities
-  const postsSlice = ALL_POSTS.slice(0, postsToShow);
-
-  postsSlice.forEach(function (p, i) {
+  // Render all posts in scrollable box
+  ALL_POSTS.forEach(function (p, i) {
     const postDiv = createPostElement(p, i);
     box.appendChild(postDiv);
 
@@ -89,11 +85,17 @@ function renderPosts() {
     }
   });
 
-  const viewAllButton = document.createElement('button');
-  viewAllButton.className = 'view-all-button';
+  // Check if button already exists, if not create it
+  let viewAllButton = document.getElementById('viewAllButton');
+  if (!viewAllButton) {
+    viewAllButton = document.createElement('button');
+    viewAllButton.id = 'viewAllButton';
+    viewAllButton.className = 'view-all-button';
+    viewAllButton.onclick = showAllActivities;
+    content.appendChild(viewAllButton);
+  }
+  
   viewAllButton.textContent = 'View All Activities (' + ALL_POSTS.length + ')';
-  viewAllButton.onclick = showAllActivities;
-  box.appendChild(viewAllButton);
 }
 
 function createPostElement(p, i) {
@@ -403,15 +405,5 @@ function escapeHtml(text) {
   div.textContent = text;
   return div.innerHTML;
 }
-
-window.addEventListener('resize', function() {
-  const allActivitiesOverlay = document.getElementById('allActivitiesOverlay');
-  const activityDetailOverlay = document.getElementById('activityDetailOverlay');
-  
-  if (!allActivitiesOverlay.classList.contains('active') && 
-      !activityDetailOverlay.classList.contains('active')) {
-    renderPosts();
-  }
-});
 
 loadData();
