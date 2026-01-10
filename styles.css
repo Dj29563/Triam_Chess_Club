@@ -534,3 +534,9 @@ section {
 #mainNav.shift {
   top: 70px;
 }
+
+.nav-logo img {
+  height: 24px;      /* smaller logo */
+  width: auto;
+  object-fit: contain;
+}
