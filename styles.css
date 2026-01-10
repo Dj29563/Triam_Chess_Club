@@ -10,6 +10,7 @@ html, body {
   overflow-y: scroll;
   background: #111;
   color: white;
+  scroll-snap-type: y mandatory;
 }
 
 nav {
@@ -54,12 +55,14 @@ nav button:hover {
 }
 
 section {
-  min-height: 100vh;
+  height: 100vh;
   padding: 70px 20px 40px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  overflow: visible;
+  overflow: hidden;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 #about {
