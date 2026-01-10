@@ -18,25 +18,24 @@ nav {
   top: 0;
   width: 100%;
   background: rgba(0, 0, 0, 0.9);
-  padding: 14px;
-  text-align: center;
+  padding: 10px 12px;
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  transition: top 0.3s ease;
-}
 
-nav.dropdown {
-  top: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  overflow-x: auto;  
+  white-space: nowrap;    
 }
 
 .nav-logo {
-  font-size: 2em;
-  margin-bottom: 10px;
-  display: none;
-}
-
-nav.dropdown .nav-logo {
-  display: block;
+  font-size: 1.6em;
+  margin: 0;
+  display: inline-block;
+  flex-shrink: 0;
 }
 
 nav button {
