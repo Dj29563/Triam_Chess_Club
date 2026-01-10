@@ -406,4 +406,23 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+const aboutSection = document.getElementById("about");
+const aboutPanel = document.getElementById("aboutPanel");
+const mainNav = document.getElementById("mainNav");
+
+const observer = new IntersectionObserver(
+  ([entry]) => {
+    if (entry.isIntersecting) {
+      aboutPanel.classList.add("show");
+      mainNav.classList.add("shift");
+    } else {
+      aboutPanel.classList.remove("show");
+      mainNav.classList.remove("shift");
+    }
+  },
+  { threshold: 0.6 }
+);
+
+observer.observe(aboutSection);
+
 loadData();
