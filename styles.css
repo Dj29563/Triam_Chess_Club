@@ -8,7 +8,7 @@ html, body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   scroll-behavior: smooth;
   overflow-y: scroll;
-  background: #111;
+  background: #202831;
   color: white;
   scroll-snap-type: y mandatory;
 }
@@ -508,7 +508,7 @@ section {
   left: 0;
   width: 100%;
   height: 70px;
-  background: #111;
+  background: #202831;
   color: white;
   display: flex;
   justify-content: center;
