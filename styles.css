@@ -540,3 +540,31 @@ section {
   width: auto;
   object-fit: contain;
 }
+
+.about-panel-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.about-img {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 50px;        /* change this to resize all */
+  width: auto;
+  object-fit: contain;
+}
+
+.about-img.left {
+  left: 0;
+}
+
+.about-img.center {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.about-img.right {
+  right: 0;
+}
