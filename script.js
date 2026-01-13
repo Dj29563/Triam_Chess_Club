@@ -406,27 +406,30 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const aboutSection = document.getElementById("about");
-  const aboutPanel = document.getElementById("aboutPanel");
-  const mainNav = document.getElementById("mainNav");
+const aboutSection = document.getElementById("about");
+const aboutPanel = document.getElementById("aboutPanel");
+const mainNav = document.getElementById("mainNav");
 
+function checkAboutPanel() {
   if (!aboutSection || !aboutPanel || !mainNav) return;
 
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) {
-        aboutPanel.classList.add("show");
-        mainNav.classList.add("shift");
-      } else {
-        aboutPanel.classList.remove("show");
-        mainNav.classList.remove("shift");
-      }
-    },
-    { threshold: 0.6 }
-  );
+  const rect = aboutSection.getBoundingClientRect();
+  const windowHeight = window.innerHeight;
 
-  observer.observe(aboutSection);
-});
+  // About section is considered "active" when its middle is on screen
+  const aboutMiddle = rect.top + rect.height / 2;
+
+  if (aboutMiddle > 0 && aboutMiddle < windowHeight) {
+    aboutPanel.classList.add("show");
+    mainNav.classList.add("shift");
+  } else {
+    aboutPanel.classList.remove("show");
+    mainNav.classList.remove("shift");
+  }
+}
+
+window.addEventListener("scroll", checkAboutPanel);
+window.addEventListener("load", checkAboutPanel);
+
 
 loadData();
