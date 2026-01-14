@@ -568,3 +568,103 @@ section {
 .about-img.right {
   right: 0;
 }
+
+.subtitle {
+  font-size: 1.3em;
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+
+.about-description {
+  max-width: 800px;
+  margin: 0 auto 60px auto;
+  text-align: center;
+}
+
+.about-description p {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #e0e0e0;
+}
+
+.chess-types {
+  display: flex;
+  gap: 30px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.chess-card {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.chess-card:hover {
+  border-color: rgba(30, 136, 229, 0.5);
+  box-shadow: 0 8px 30px rgba(30, 136, 229, 0.2);
+}
+
+.chess-card h3 {
+  margin: 0;
+  padding: 25px;
+  cursor: pointer;
+  font-size: 1.5em;
+  color: #1e88e5;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.03);
+  user-select: none;
+}
+
+.chess-card h3:hover {
+  background: rgba(30, 136, 229, 0.1);
+  color: #42a5f5;
+}
+
+.chess-card h3:active {
+  transform: scale(0.98);
+}
+
+.chess-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+              padding 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.4s ease;
+  opacity: 0;
+  padding: 0 25px;
+}
+
+.chess-content.active {
+  max-height: 500px;
+  opacity: 1;
+  padding: 0 25px 25px 25px;
+}
+
+.chess-content p {
+  font-size: 1em;
+  line-height: 1.7;
+  color: #c0c0c0;
+  margin: 0;
+  padding-top: 15px;
+}
+
+@media (max-width: 768px) {
+  .chess-types {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .about-description {
+    margin-bottom: 40px;
+  }
+  
+  .about-description p {
+    font-size: 1em;
+  }
+}
