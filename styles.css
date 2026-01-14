@@ -65,8 +65,15 @@ section {
 
 #about {
   background: #202831;
-  align-items: center;
+  align-items: flex-start;
   height: 100vh;
+  padding-top: 80px;
+  overflow-y: auto;
+}
+
+#about .content {
+  padding-bottom: 40px;
+  min-height: 100%;
 }
 
 #about h1 {
@@ -587,14 +594,6 @@ section {
   color: #e0e0e0;
 }
 
-.chess-types {
-  display: flex;
-  gap: 30px;
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
-}
-
 .chess-card {
   flex: 1;
   background: rgba(255, 255, 255, 0.05);
@@ -654,17 +653,65 @@ section {
   padding-top: 15px;
 }
 
+.chess-types {
+  display: flex;
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
 @media (max-width: 768px) {
   .chess-types {
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: row;
+    gap: 15px;
+    padding: 0 10px;
+  }
+  
+  .chess-card h3 {
+    font-size: 1.1em;
+    padding: 20px 15px;
+  }
+  
+  .chess-content {
+    padding: 0 15px;
+  }
+  
+  .chess-content.active {
+    padding: 0 15px 20px 15px;
+  }
+  
+  .chess-content p {
+    font-size: 0.9em;
   }
   
   .about-description {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
+    padding: 0 10px;
   }
   
   .about-description p {
+    font-size: 0.95em;
+  }
+  
+  #about h1 {
+    font-size: 2.2em;
+  }
+  
+  .subtitle {
+    font-size: 1.1em;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chess-card h3 {
     font-size: 1em;
+    padding: 15px 10px;
+  }
+  
+  .chess-types {
+    gap: 10px;
   }
 }
