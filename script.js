@@ -425,4 +425,63 @@ const observer = new IntersectionObserver(
 
 observer.observe(aboutSection);
 
+let currentActive = null;
+
+const defaultContent = `
+  <p>Welcome to our Chess Club! We are a community of chess enthusiasts dedicated to learning, playing, and enjoying both traditional chess and Thai chess (Makruk). Whether you're a beginner or an experienced player, join us to improve your skills and make new friends!</p>
+`;
+
+const thaiChessContent = `
+  <h2>🐘 Thai Chess (Makruk)</h2>
+  <p>Thai Chess, known as Makruk, is a traditional board game from Thailand that is closely related to chess. It is considered one of the oldest forms of chess still played today.</p>
+  <p><strong>Key Features:</strong></p>
+  <ul>
+    <li>Played on an 8×8 board similar to Western chess</li>
+    <li>Pieces have different movements than standard chess</li>
+    <li>The Queen (called "Met") moves only one square diagonally</li>
+    <li>The Bishop (called "Khon") moves one square diagonally</li>
+    <li>Pawns start on the third rank and promote on the sixth rank</li>
+    <li>Considered more strategic due to slower-moving pieces</li>
+  </ul>
+`;
+
+const normalChessContent = `
+  <h2>♛ Normal Chess (International Chess)</h2>
+  <p>Normal Chess, also known as International Chess or Western Chess, is the most widely played strategy board game in the world.</p>
+  <p><strong>Key Features:</strong></p>
+  <ul>
+    <li>Played on an 8×8 checkered board with 64 squares</li>
+    <li>Each player starts with 16 pieces: 1 king, 1 queen, 2 rooks, 2 bishops, 2 knights, and 8 pawns</li>
+    <li>The objective is to checkmate the opponent's king</li>
+    <li>Games can also end in stalemate or draw</li>
+    <li>Competitive tournaments follow FIDE rules</li>
+    <li>Rich history dating back over 1500 years</li>
+  </ul>
+`;
+
+function toggleContent(boxId) {
+  const contentArea = document.getElementById('content-area');
+  const buttons = document.querySelectorAll('.toggle-btn');
+  
+  // If clicking the same button, reset to default
+  if (currentActive === boxId) {
+    contentArea.innerHTML = defaultContent;
+    buttons.forEach(btn => btn.classList.remove('active'));
+    currentActive = null;
+  } else {
+    // Update content based on which button was clicked
+    if (boxId === 'thai-chess') {
+        contentArea.innerHTML = thaiChessContent;
+        buttons[0].classList.add('active');
+        buttons[1].classList.remove('active');
+    } else {
+        contentArea.innerHTML = normalChessContent;
+        buttons[1].classList.add('active');
+        buttons[0].classList.remove('active');
+    }
+    
+    currentActive = boxId;
+  }
+}
+
 loadData();
