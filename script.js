@@ -428,7 +428,9 @@ observer.observe(aboutSection);
 let currentActive = null;
 
 const defaultContent = `
-  <p>Welcome to our Chess Club! Join us to learn and play both traditional chess and Thai chess (Makruk). All skill levels welcome!</p>
+  <p>ยินดีต้อนรับสู่ชมรมหมากกระดาน โรงเรียนเตรียมอุดมศึกษา</p>
+  <p>ชมรมหมากรุกเป็นชมรมที่เปิดโอกาสให้นักเรียนได้พัฒนาทักษะการคิดวิเคราะห์ การวางแผน และการตัดสินใจอย่างมีเหตุผล ผ่านการเล่นหมากรุก</p>  
+  <p>พบกับพวกเราได้ทุกวันจันทร์ในคาบชมรม แล้วมาร่วมสนุกไปด้วยกันนะครับ</p>
 `;
 
 const thaiChessContent = `
