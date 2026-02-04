@@ -74,11 +74,6 @@ section {
   margin: 0;
 }
 
-#about p {
-  font-size: 1.3em;
-  margin-top: 10px;
-}
-
 #activities {
   background: #f4f4f4;
   color: #111;
@@ -611,11 +606,12 @@ section {
 .club-description h2 {
   color: #333;
   margin-bottom: 10px;
-  font-size: 14px;
+  font-size: 1.3em;
 }
 
 .club-description p {
   margin-bottom: 8px;
+  font-size: 0.85em;
 }
 
 .toggle-buttons {
