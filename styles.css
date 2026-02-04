@@ -137,10 +137,6 @@ section {
   align-items: center;
 }
 
-.content h2 {
-  margin-top: 0;
-}
-
 .activity-box {
   max-height: 80%;
   background: #fff;
