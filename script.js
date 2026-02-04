@@ -425,21 +425,4 @@ const observer = new IntersectionObserver(
 
 observer.observe(aboutSection);
 
-function toggleCard(cardType) {
-  const thaiContent = document.getElementById('thaiChessContent');
-  const internationalContent = document.getElementById('internationalChessContent');
-  
-  if (cardType === 'thaiChess') {
-    // Toggle Thai Chess
-    thaiContent.classList.toggle('active');
-    // Close International Chess
-    internationalContent.classList.remove('active');
-  } else if (cardType === 'internationalChess') {
-    // Toggle International Chess
-    internationalContent.classList.toggle('active');
-    // Close Thai Chess
-    thaiContent.classList.remove('active');
-  }
-}
-
 loadData();
