@@ -611,14 +611,7 @@ section {
 .club-description h2 {
   color: #333;
   margin-bottom: 10px;
-  font-size: 1.3em;
-}
-
-.club-description ul {
-  margin-left: 20px;
-  color: #555;
-  line-height: 1.8;
-  text-align: left;
+  font-size: 14px;
 }
 
 .club-description p {
