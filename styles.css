@@ -580,38 +580,41 @@ section {
   border-radius: 15px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   max-width: 600px;
-  max-height: 80%;
   width: 100%;
+  height: 60vh;
   padding: 30px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .club-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .club-header h1 {
   color: #333;
-  font-size: 2em;
-  margin-bottom: 10px;
+  font-size: 1.8em;
+  margin-bottom: 5px;
 }
 
 .club-description {
   color: #666;
   line-height: 1.6;
-  margin-bottom: 30px;
-  padding: 20px;
+  margin-bottom: 20px;
+  padding: 15px;
   border-radius: 10px;
   background: #f9f9f9;
   border: 2px solid #e0e0e0;
-  min-height: 200px;
-  max-height: 90%;
+  flex: 1;
+  overflow: hidden;
 }
 
 .club-description h2 {
   color: #333;
-  margin-bottom: 15px;
-  font-size: 1.5em;
+  margin-bottom: 10px;
+  font-size: 1.3em;
 }
 
 .club-description ul {
@@ -622,24 +625,24 @@ section {
 }
 
 .club-description p {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .toggle-buttons {
   display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 0;
 }
 
 .toggle-btn {
   flex: 1;
-  padding: 12px 20px;
+  padding: 10px 15px;
   border: 2px solid #667eea;
   background: white;
   color: #667eea;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   transition: all 0.3s ease;
 }
