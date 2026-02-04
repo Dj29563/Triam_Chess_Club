@@ -583,6 +583,7 @@ section {
 .club-header {
   text-align: center;
   margin-bottom: 15px;
+  margin: 0 0 5px 0;
 }
 
 .club-header h2 {
