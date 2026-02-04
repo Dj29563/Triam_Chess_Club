@@ -128,6 +128,7 @@ section {
 }
 
 .content {
+  transform: translateY(-30px);
   width: 100%;
   max-width: 1000px;
   text-align: center;
