@@ -136,6 +136,10 @@ section {
   align-items: center;
 }
 
+.content h2 {
+  margin-top: 0;
+}
+
 .activity-box {
   background: #fff;
   border-radius: 12px;
