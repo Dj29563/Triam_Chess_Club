@@ -87,7 +87,7 @@ section {
   font-size: 2em;
 }
 
-#activities .contents {
+#activities .content {
   max-width: 1000px;
   height: calc(100vh - 100px);
   display: flex;
